@@ -1,0 +1,2 @@
+# jak-Dojade
+This code comprises a simple game implemented in C++ using the SDL library. It includes functionalities for rendering game elements, handling player movement, generating and updating the game map, managing user interface elements such as score display and life indicators, and saving game results. The game involves controlling a player character to navigate through dynamically generated obstacles while collecting points.
