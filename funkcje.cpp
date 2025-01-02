@@ -1,45 +1,50 @@
-#include"funkcje.h"
+#include "headers/funkcje.h"
+#include "headers/queue.h"
+#include "headers/hashmap.h"
 
-
-#define X pos.x
-#define Y pos.y
+#define X pos.key
+#define Y pos.value
+//city, distance, prev
+#define CITY_NAME  getElem().key
+#define DISTANCE getElem().value.key
+#define PREV getElem().value.value
 
 using namespace std;
 
-char* getCityName(int i, int j, char** t, int w, int h)
+char* getCityName(pair<int, int> pos, char** t, int w, int h)
 {
-    if (i - 1 >= 0 && ((t[i - 1][j] >= 'A' && t[i - 1][j] <= 'Z') || (t[i - 1][j] >= '0' && t[i - 1][j] <= '9')))
-        i--;
-    else if (i + 1 < h && ((t[i + 1][j] >= 'A' && t[i + 1][j] <= 'Z') || (t[i + 1][j] >= '0' && t[i + 1][j] <= '9')))
-        i++;
-    else if (j - 1 >= 0 && ((t[i][j - 1] >= 'A' && t[i][j - 1] <= 'Z') || (t[i][j - 1] >= '0' && t[i][j - 1] <= '9')))
-        j--;
-    else if (j + 1 < w && ((t[i][j + 1] >= 'A' && t[i][j + 1] <= 'Z') || (t[i][j + 1] >= '0' && t[i][j + 1] <= '9')))
-        j++;
-    else if (i - 1 >= 0 && j - 1 >= 0 && ((t[i - 1][j - 1] >= 'A' && t[i - 1][j - 1] <= 'Z') || (t[i - 1][j - 1] >= '0' && t[i - 1][j - 1] <= '9')))
+    if (X - 1 >= 0 && ((t[X - 1][Y] >= 'A' && t[X - 1][Y] <= 'Z') || (t[X - 1][Y] >= '0' && t[X - 1][Y] <= '9')))
+        X--;
+    else if (X + 1 < h && ((t[X + 1][Y] >= 'A' && t[X + 1][Y] <= 'Z') || (t[X + 1][Y] >= '0' && t[X + 1][Y] <= '9')))
+        X++;
+    else if (Y - 1 >= 0 && ((t[X][Y - 1] >= 'A' && t[X][Y - 1] <= 'Z') || (t[X][Y - 1] >= '0' && t[X][Y - 1] <= '9')))
+        Y--;
+    else if (Y + 1 < w && ((t[X][Y + 1] >= 'A' && t[X][Y + 1] <= 'Z') || (t[X][Y + 1] >= '0' && t[X][Y + 1] <= '9')))
+        Y++;
+    else if (X - 1 >= 0 && Y - 1 >= 0 && ((t[X - 1][Y - 1] >= 'A' && t[X - 1][Y - 1] <= 'Z') || (t[X - 1][Y - 1] >= '0' && t[X - 1][Y - 1] <= '9')))
     {
-        i--;
-        j--;
+        X--;
+        Y--;
     }
-    else if (i - 1 >= 0 && j + 1 < w && ((t[i - 1][j + 1] >= 'A' && t[i - 1][j + 1] <= 'Z') || (t[i - 1][j + 1] >= '0' && t[i - 1][j + 1] <= '9')))
+    else if (X - 1 >= 0 && Y + 1 < w && ((t[X - 1][Y + 1] >= 'A' && t[X - 1][Y + 1] <= 'Z') || (t[X - 1][Y + 1] >= '0' && t[X - 1][Y + 1] <= '9')))
     {
-        i--;
-        j++;
+        X--;
+        Y++;
     }
-    else if (i + 1 < h && j + 1 < w && ((t[i + 1][j + 1] >= 'A' && t[i + 1][j + 1] <= 'Z') || (t[i + 1][j + 1] >= '0' && t[i + 1][j + 1] <= '9')))
+    else if (X + 1 < h && Y + 1 < w && ((t[X + 1][Y + 1] >= 'A' && t[X + 1][Y + 1] <= 'Z') || (t[X + 1][Y + 1] >= '0' && t[X + 1][Y + 1] <= '9')))
     {
-        i++;
-        j++;
+        X++;
+        Y++;
     }
-    else if (i + 1 < h && j - 1 >= 0 && ((t[i + 1][j - 1] >= 'A' && t[i + 1][j - 1] <= 'Z') || (t[i + 1][j - 1] >= '0' && t[i + 1][j - 1] <= '9')))
+    else if (X + 1 < h && Y - 1 >= 0 && ((t[X + 1][Y - 1] >= 'A' && t[X + 1][Y - 1] <= 'Z') || (t[X + 1][Y - 1] >= '0' && t[X + 1][Y - 1] <= '9')))
     {
-        i++;
-        j--;
+        X++;
+        Y--;
     }
-    int l = j, p = j;
+    int l = Y, p = Y;
     while (l >= 0)
     {
-        if ((t[i][l] >= 'A' && t[i][l] <= 'Z') || (t[i][l] >= '0' && t[i][l] <= '9'))
+        if ((t[X][l] >= 'A' && t[X][l] <= 'Z') || (t[X][l] >= '0' && t[X][l] <= '9'))
         {
             l--;
         }
@@ -48,19 +53,19 @@ char* getCityName(int i, int j, char** t, int w, int h)
     }
     while (p < w)
     {
-        if ((t[i][p] >= 'A' && t[i][p] <= 'Z') || (t[i][p] >= '0' && t[i][p] <= '9'))
+        if ((t[X][p] >= 'A' && t[X][p] <= 'Z') || (t[X][p] >= '0' && t[X][p] <= '9'))
         {
             p++;
         }
         else
             break;
     }
-    j = l;
+    Y = l;
     char* c = new char[p - l];
-    while (j < p)
+    while (Y < p)
     {
-        c[j - l] = t[i][j + 1];
-        j++;
+        c[Y - l] = t[X][Y + 1];
+        Y++;
     }
     c[p - l - 1] = '\0';
 
@@ -80,69 +85,72 @@ bool haveFriends(char** t, int w, int h, int x, int y)
     return false;
 }
 
-friends_list* bfs(Para pos, char** t, int w, int h, Hashmap_CityNames& names)
+list<hashElement>* bfs(pair<int, int> pos, char** map, int width, int height, hashmap<pair<int, int>, char*>& cityNames)
 {
-    if (!haveFriends(t, w, h, X, Y))
+    if (!haveFriends(map, width, height, X, Y))
         return nullptr;
+
     int distance = 0;
-    friends_list* fr = nullptr;
-    bool** vis = new bool* [h];
-    for (int i = 0; i < h; i++)
+    list<hashElement>* fr = nullptr;
+    bool** vis = new bool* [height];
+    for (int i = 0; i < height; i++)
     {
-        vis[i] = new bool[w];
-        for (int j = 0; j < w; j++)
+        vis[i] = new bool[width];
+        for (int j = 0; j < width; j++)
         {
             vis[i][j] = false;
         }
     }
-    queue_bfs* tail = nullptr;
-    tail = tail->push(pos, distance);
-    vis[pos.x][pos.y] = true;
-    queue_bfs* head = tail;
-    while (head != nullptr)
+    
+    queue<pair<pair<int, int>, int>>posDis;
+    posDis.push({ pos, distance });
+    vis[X][Y] = true;
+    
+    while (posDis.getSize() != 0)
     {
-        distance++;
-        if (X - 1 >= 0 && (t[X - 1][Y] == '#' || t[X - 1][Y] == '*'))
-            if (vis[X - 1][Y] != true)
-            {
-                vis[X - 1][Y] = true;
-                if (t[X - 1][Y] == '*')
-                    fr = fr->push(distance, names.get({ X - 1,Y }));
-                else
-                    tail = tail->push({ X - 1,Y }, distance);
-            }
-        if (X + 1 < h && (t[X + 1][Y] == '#' || t[X + 1][Y] == '*'))
-            if (vis[X + 1][Y] != true)
-            {
-                vis[X + 1][Y] = true;
-                if (t[X + 1][Y] == '*')
-                    fr = fr->push(distance, names.get({ X + 1,Y }));
-                else
-                    tail = tail->push({ X + 1,Y }, distance);
-            }
-        if (Y - 1 >= 0 && (t[X][Y - 1] == '#' || t[X][Y - 1] == '*'))
-            if (vis[X][Y - 1] != true)
-            {
-                vis[X][Y - 1] = true;
-                if (t[X][Y - 1] == '*')
-                    fr = fr->push(distance, names.get({ X,Y - 1 }));
-                else
-                    tail = tail->push({ X,Y - 1 }, distance);
-            }
-        if (Y + 1 < w && (t[X][Y + 1] == '#' || t[X][Y + 1] == '*'))
-            if (vis[X][Y + 1] != true)
-            {
-                vis[X][Y + 1] = true;
-                if (t[X][Y + 1] == '*')
-                    fr = fr->push(distance, names.get({ X,Y + 1 }));
-                else
-                    tail = tail->push({ X,Y + 1 }, distance);
-            }
+        pos = posDis.front().key;
+        distance = posDis.front().value + 1;
+        if (X - 1 >= 0 && (map[X - 1][Y] == '#' || map[X - 1][Y] == '*') 
+            && !vis[X - 1][Y])
+        {
+            vis[X - 1][Y] = true;
+            if (map[X - 1][Y] == '*')
+                fr = fr->push({ distance, cityNames.get({ X - 1,Y }) });
+            else
+                posDis.push({{X - 1, Y}, distance});
+        }
+        if (X + 1 < height && (map[X + 1][Y] == '#' || map[X + 1][Y] == '*')
+            && !vis[X + 1][Y])
+        {
+            vis[X + 1][Y] = true;
+            if (map[X + 1][Y] == '*')
+                fr = fr->push({ distance, cityNames.get({ X + 1,Y }) });
+            else
+                posDis.push({ {X + 1, Y}, distance });
+        }
+        if (Y - 1 >= 0 && (map[X][Y - 1] == '#' || map[X][Y - 1] == '*')
+            && vis[X][Y - 1] != true)
+        {
+            vis[X][Y - 1] = true;
+            if (map[X][Y - 1] == '*')
+                fr = fr->push({ distance, cityNames.get({ X,Y - 1 }) });
+            else
+                posDis.push({ {X, Y - 1}, distance });
+        }
+        if (Y + 1 < width && (map[X][Y + 1] == '#' || map[X][Y + 1] == '*')
+            && vis[X][Y + 1] != true)
+        {
+            vis[X][Y + 1] = true;
+            if (map[X][Y + 1] == '*')
+                fr = fr->push({ distance, cityNames.get({ X,Y + 1 }) });
+            else
+                posDis.push({ {X, Y + 1}, distance });
+        }
 
-        head = head->pop(pos, distance);
+        posDis.pop();
     }
 
-    for (int i = 0; i < h; i++)
+    for (int i = 0; i < height; i++)
     {
         delete[]vis[i];
     }
@@ -150,10 +158,12 @@ friends_list* bfs(Para pos, char** t, int w, int h, Hashmap_CityNames& names)
     return fr;
 }
 
-char* czytajString()
+char* czytajString(bool fl)
 {
     char* tmp = new char[10];
     int i = 1;
+    if(fl)
+        tmp[0] = getchar();
     tmp[0] = getchar();
     while (tmp[i - 1] != ' ')
     {
@@ -164,24 +174,9 @@ char* czytajString()
     return tmp;
 }
 
-char* czytajString1()
+bool equals(char* c1, char* c2)
 {
-    char* tmp = new char[10];
-    int i = 1;
-    tmp[0] = getchar();
-    tmp[0] = getchar();
-    while (tmp[i - 1] != ' ')
-    {
-        tmp[i] = getchar();
-        i++;
-    }
-    tmp[i - 1] = '\0';
-    return tmp;
-}
-
-bool sameString(char* c1, char* c2)
-{
-    cout << !strcmp(c1, c2);
+    //cout << !strcmp(c1, c2);
     bool same = true;
     int i = 0;
     while (c1[i] != '\0' || c2[i] != '\0')
@@ -195,105 +190,150 @@ bool sameString(char* c1, char* c2)
     return same;
 }
 
-int dijkstra_time(char* from, char* to, Hashmap* hashmap, list_cityName* allCities)
+int dijkstra_time(char* from, char* to, hashmap<char*, list<hashElement>*>& hashma, list<char*>* allCities)
 {
     if (!strcmp(from, to))
         return 0;
+    
     char* c = nullptr;
-    int distance = 0;
-    Hashmap_Dijkstra map(SIZE1);
-    list_city_distance* list = nullptr;
-    list_Dijkstra* tmp = nullptr;
-    friends_list* fr = nullptr;
-    list = list->push_end(distance, from);
+    hashmap<char*, pair<int, char*>> map(10); //city, distance, prev
+    queue<pair<int, char*>> que; //distance, name
+    
+    que.push({ 0, from });
     while (allCities != nullptr)
     {
-        allCities = allCities->pop_front(&c);
-        map.put(c);
-        /*if (!sameString(from, c))
-                list = list->push_end(MAX, c);*/
+        allCities = allCities->pop_without_delete(c);
+        map.put(c, { MAX, nullptr });
     }
-    map.get(from)->setDistance(distance);
-    while (list != nullptr)
+
+    map.set(from, { 0, nullptr });
+
+    while (que.getSize() != 0)
     {
-        list = list->pop_front(&c, distance);
-        fr = hashmap->get(c);
+        pair<int, char*> pa = que.pop();
+        list<hashElement>* fr = hashma.get(pa.value);
         while (fr != nullptr)
         {
-            int tmpDist = map.get(c)->getDistane() + fr->get_dis();
-            tmp = map.get(fr->getFriend());
+            int tmpDist = map.get(pa.value).key + fr->getElem().distance;
+            list <pair< char*, pair<int, char* >> >* tmp = map.getListPtr(fr->getElem().friendName);
 
-            if (tmpDist < tmp->getDistane())
+            if (tmpDist < tmp->DISTANCE)
             {
-                tmp->setDistance(tmpDist);
-                tmp->setPrev(c);
-                list = list->push_end(tmpDist, fr->getFriend());
+                tmp->set(0, { tmp->CITY_NAME, {tmpDist, pa.value}});
+                que.push({ tmpDist, fr->getElem().friendName });
             }
-            fr = fr->get_at_pos(1);
+            fr = fr->getNext();
         }
-        if (!strcmp(c, to))
+        if (!strcmp(pa.value, to))
             break;
     }
-    /*while (list != nullptr)
-            list = list->pop_front(&c, distance);*/
 
-    return map.get(to)->getDistane();
+    return map.get(to).key;
 }
 
-void dijkstra_way(char* from, char* to, Hashmap* hashmap, list_cityName* allCities)
+void dijkstra_way(char* from, char* to, hashmap<char*, list<hashElement>*> hashma, list<char*>* allCities)
 {
     if (!strcmp(from, to))
     {
-        cout << 0 << endl;
+        printf("0\n");
         return;
     }
+
     char* c = nullptr;
-    int distance = 0;
-    Hashmap_Dijkstra map(SIZE1);
-    list_city_distance* list = nullptr;
-    list_Dijkstra* tmp = nullptr;
-    friends_list* fr = nullptr;
-    list = list->push_end(distance, from);
+    hashmap<char*, pair<int, char*>> map(10); //city, distance, prev
+    queue<pair<int, char*>> que; //distance, name
+
+    que.push({ 0, from });
     while (allCities != nullptr)
     {
-        allCities = allCities->pop_front(&c);
-        map.put(c);
-        /*if (!sameString(from, c))
-                list = list->push_end(MAX, c);*/
+        allCities = allCities->pop_without_delete(c);
+        map.put(c, { MAX, nullptr });
     }
-    map.get(from)->setDistance(distance);
-    while (list != nullptr)
+
+    map.set(from, { 0, nullptr });
+
+    while (que.getSize() != 0)
     {
-        list = list->pop_front(&c, distance);
-        fr = hashmap->get(c);
+        pair<int, char*> pa = que.pop();
+        list<hashElement>* fr = hashma.get(pa.value);
         while (fr != nullptr)
         {
-            int tmpDist = map.get(c)->getDistane() + fr->get_dis();
-            tmp = map.get(fr->getFriend());
+            int tmpDist = map.get(pa.value).key + fr->getElem().distance;
+            list <pair< char*, pair<int, char* >> >* tmp = map.getListPtr(fr->getElem().friendName);
+
+            if (tmpDist < tmp->DISTANCE)
+            {
+                tmp->set(0, { tmp->CITY_NAME, {tmpDist, pa.value} });
+                que.push({ tmpDist, fr->getElem().friendName });
+            }
+            fr = fr->getNext();
+        }
+        if (!strcmp(pa.value, to))
+            break;
+    }
+
+    list<char*>* head = nullptr;
+    //head = head->push(to);
+    printf("%d ", map.get(to).key);
+    while (strcmp(from, to))
+    {
+        to = map.get(to).value;
+        head = head->push(to);
+    }
+
+    head = head->pop(to);
+
+    while (head != nullptr)
+    {
+        head = head->pop(to);
+        printf("%s ", to);
+    }
+    printf("\n");
+}
+/*
+if (!strcmp(from, to))
+        return 0;
+
+    char* c = nullptr;
+    int distance = 0;
+    hashmap<char*, pair<char*, int>> map(SIZE1);
+    queue<pair<int, char*>> qu;
+    list<pair<char*, pair<char*, int>>>* tmp = nullptr;
+    list<pair<int, char*>>* fr = nullptr;
+
+    qu.push({ distance, from });
+    while (allCities != nullptr)
+    {
+        allCities = allCities->pop(c);
+        map.put(c, {nullptr, MAX});
+        if (!strcmp(from, c))
+            qu.push({ MAX, c });
+    }
+
+    map.set(from, {nullptr, distance});
+
+    while (qu.getSize() != 0)
+    {
+        pair<int, char*> par = qu.pop();
+        fr = hashma.get(par.value)->getElem();
+        while (fr != nullptr)
+        {
+            int tmpDist = map.get(par.value)->getDistane() + fr->getElem().key;
+            tmp = map.get(fr->getElem().value);
 
             if (tmpDist < tmp->getDistane())
             {
                 tmp->setDistance(tmpDist);
                 tmp->setPrev(c);
-                list = list->push_end(tmpDist, fr->getFriend());
+                qu.push({ tmpDist, fr->getElem().value });
             }
-            fr = fr->get_at_pos(1);
+            fr = fr->getNext();
         }
         if (!strcmp(c, to))
             break;
     }
-    list_cityName* head = nullptr;
-    head = head->push_front(to);
-    cout << map.get(to)->getDistane() << " ";
-    while (!!strcmp(from, to))
-    {
-        to = map.get(to)->getPrev();
-        head = head->push_front(to);
-    }
-    head->write();
-    cout << endl;
-    /*while (list != nullptr)
-            list = list->pop_front(&c, distance);*/
+    while (qu.getSize() != 0)
+            qu.pop();
 
-    return;
-}
+    return map.get(to)->getDistane();
+*/
